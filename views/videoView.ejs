@@ -1,0 +1,76 @@
+<!DOCTYPE>
+<html>
+    <head>
+        <title>
+            videoView
+        </title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    </head>
+    <body>
+        
+        
+        <video id="my-video" class="video-js" width="640" height="264" controls preload="auto" 
+        poster="" data-setup="{}">
+            <source src="" type="video/webm">
+            <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+            </p>
+        </video>
+        
+        <div>
+            <b>Send Message</b><p>
+                Message <input type="text" id="msgbox"/>
+            <br>
+            <span id="msg"></span>
+            <b>Change NickName</b><p>
+            <input type="text" id="newNick"/>
+            <button type="" id="changeNick"> button</button>
+        </div>
+        <div>
+            <span id="userList"></span>
+        </div>
+
+
+
+
+
+
+     <script>
+            var socket = new io();
+           
+            socket.emit('joinroom',{room : '<%= room %>' });
+
+            $('#msgbox').keyup(function(event){
+                if(event.which == 13){
+                    socket.emit('fromclient',{msg : $('#msgbox').val(), room :'<%= room%>'});
+                     //$('#msg').append($('#msgbox').val()+'<br>');
+                    $('#msgbox').val('');
+                }
+            });
+            
+            $('#changeNick').click(function(){
+                let newNickName = $('#newNick').val();
+                if(newNickName !=''){
+                    socket.emit('changeNick',{nickName : newNickName})
+                }
+            });
+            socket.on('printUsers', function(data){
+                $('#userList').text('');
+                for(let i in data.list){
+                    $('#userList').append(data.list[i] +'<br>');
+                }
+            });
+            socket.on('broadcast_msg', function(data){
+                $('#msg').append(data.msg+'<br>');
+            });
+            socket.on('toclient',function(data){
+                let date = new Date();
+                $('#msg').append(data.msg+'  '+date.getHours()+':'+date.getMinutes()+'<br>');
+                date = null;
+             });
+
+        
+    </script>
+    </body>
+</html>
