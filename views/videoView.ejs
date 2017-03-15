@@ -1,76 +1,116 @@
 <!DOCTYPE>
 <html>
-    <head>
-        <title>
-            videoView
-        </title>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    </head>
-    <body>
-        
-        
-        <video id="my-video" class="video-js" width="640" height="264" controls preload="auto" 
-        poster="" data-setup="{}">
-            <source src="" type="video/webm">
-            <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a web browser that
-            </p>
-        </video>
-        
-        <div>
-            <b>Send Message</b><p>
-                Message <input type="text" id="msgbox"/>
-            <br>
-            <span id="msg"></span>
-            <b>Change NickName</b><p>
-            <input type="text" id="newNick"/>
-            <button type="" id="changeNick"> button</button>
+
+<head>
+    <title>
+        videoView
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+    <link rel="stylesheet" href="../stylesheets/chatStyle.css">
+    <link href="http://vjs.zencdn.net/5.17.0/video-js.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    
+</head>
+
+<body>
+    <div class="w3-container">
+        <div class="w3-twothird w3-container">
+            <video id="my-video" class="video-js vjs-default-skin" width="750" height="600" controls preload="auto" poster="" data-setup="{}">
+                <source src="rtmp://192.168.0.9:1935/live/test" type="rtmp/mp4">
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a web browser that
+                </p>
+            </video>
         </div>
-        <div>
-            <span id="userList"></span>
+        <div class="w3-third w3-container" id="chatDisplay">
+            <div class="w3-bar w3-black w3-container">
+                <button class="w3-bar-item w3-button" id="chatting">채팅창</button>
+                <button class="w3-bar-item w3-button" id="userlisting">유저목록</button>
+            </div>
+            <div class="w3-container" id="chat">
+                <br>
+                <div class="w3-container" >
+                    <div id="msg" style="height: 450px"></div>
+                </div>
+                <div class="w3-container">
+                    <input type="text" id="msgbox" /><button>send</button>
+                    <p>
+                        <b>닉네임 변경</b>
+                        <p>
+                            <input type="text" id="newNick" />
+                            <button type="" id="changeNick"> ok </button>
+                </div>
+            </div>
+            <div class="w3-container" id="userlist" style="display: none">
+                <div class="w3-container">
+                    <div id="userList" style="height: 450px"></div>
+                </div>
+            </div>
         </div>
-
-
-
-
-
-
-     <script>
-            var socket = new io();
-           
-            socket.emit('joinroom',{room : '<%= room %>' });
-
-            $('#msgbox').keyup(function(event){
-                if(event.which == 13){
-                    socket.emit('fromclient',{msg : $('#msgbox').val(), room :'<%= room%>'});
-                     //$('#msg').append($('#msgbox').val()+'<br>');
-                    $('#msgbox').val('');
-                }
+    </div>
+    <script src="http://vjs.zencdn.net/5.17.0/video.js"></script>
+    <script>
+        $('#chatting').click(function () {
+            $('#userlist').css({
+                display: 'none'
             });
-            
-            $('#changeNick').click(function(){
-                let newNickName = $('#newNick').val();
-                if(newNickName !=''){
-                    socket.emit('changeNick',{nickName : newNickName})
-                }
+            $('#chat').css({
+                display: 'block'
             });
-            socket.on('printUsers', function(data){
-                $('#userList').text('');
-                for(let i in data.list){
-                    $('#userList').append(data.list[i] +'<br>');
-                }
+        });
+        $('#userlisting').click(function (params) {
+            $('#chat').css({
+                display: 'none'
             });
-            socket.on('broadcast_msg', function(data){
-                $('#msg').append(data.msg+'<br>');
+            $('#userlist').css({
+                display: 'block'
             });
-            socket.on('toclient',function(data){
-                let date = new Date();
-                $('#msg').append(data.msg+'  '+date.getHours()+':'+date.getMinutes()+'<br>');
-                date = null;
-             });
+        });
 
-        
+        var socket = new io();
+
+        socket.emit('joinroom', {
+            room: '<%= room %>'
+        });
+
+        $('#msgbox').keyup(function (event) {
+            if (event.which == 13) {
+                socket.emit('fromclient', {
+                    msg: $('#msgbox').val(),
+                    room: '<%= room%>'
+                });
+                //$('#msg').append($('#msgbox').val()+'<br>');
+                $('#msgbox').val('');
+            }
+        });
+
+        $('#changeNick').click(function () {
+            let newNickName = $('#newNick').val();
+            if (newNickName != '') {
+                socket.emit('changeNick', {
+                    nickName: newNickName
+                })
+            }
+        });
+        socket.on('printUsers', function (data) {
+            $('#userList').text('');
+            for (let i in data.list) {
+                $('#userList').append(data.list[i] + '<br>');
+            }
+        });
+        socket.on('broadcast_msg', function (data) {
+            $('#msg').append(data.msg + '<br>');
+        });
+        socket.on('toclient', function (data) {
+            let date = new Date();
+            $('#msg').append(data.nickName + ' <small>' + date.getHours() + ':' + date.getMinutes() +
+                '</small><br>' + data.msg + '<br>');
+            $('#msg').scrollTop($('#msg').prop('scrollHeight'))
+            date = null;
+        });
     </script>
-    </body>
+</body>
+
 </html>
