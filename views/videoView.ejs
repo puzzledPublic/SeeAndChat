@@ -11,7 +11,6 @@
     <link href="http://vjs.zencdn.net/5.17.0/video-js.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    
 </head>
 
 <body>
@@ -24,6 +23,7 @@
                 </p>
             </video>
         </div>
+        <!--chat display-->
         <div class="w3-third w3-container" id="chatDisplay">
             <div class="w3-bar w3-black w3-container">
                 <button class="w3-bar-item w3-button" id="chatting">채팅창</button>
@@ -31,16 +31,18 @@
             </div>
             <div class="w3-container" id="chat">
                 <br>
-                <div class="w3-container" >
+                <div class="w3-container">
                     <div id="msg" style="height: 450px"></div>
                 </div>
                 <div class="w3-container">
                     <input type="text" id="msgbox" /><button>send</button>
                     <p>
+                        <% if(!auth){ %>
                         <b>닉네임 변경</b>
                         <p>
                             <input type="text" id="newNick" />
                             <button type="" id="changeNick"> ok </button>
+                        <% } %>
                 </div>
             </div>
             <div class="w3-container" id="userlist" style="display: none">

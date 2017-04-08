@@ -5,6 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
+var passport = require('passport');
+var passportConfig = require('./config/passportConfig');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
@@ -29,21 +31,43 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
+
 //세션설정
+var sessionMiddleware = session({
+    secret: 'keyboard tank',
+    resave: false,
+    saveUninitialized: true,
+});
+app.sessionMiddleware = sessionMiddleware;
+app.use(sessionMiddleware);
+/*
 app.use(session({
     secret: 'keyboard tank',
     resave: false,
     saveUninitialized: true,
-}));
+}));*/
+//패스포트 설정
+app.use(passport.initialize());
+app.use(passport.session());
+passportConfig();
 //정적파일 제공 path
 app.use(express.static(path.join(__dirname, 'public')));
+
 
 //커스텀 라우팅
 app.use('/', routes);
 app.use('/users', users);
+app.use('/videoView', videoView);
+//인증 확인(순서주의)
+app.use(function authenticationMiddleware(req, res, next){
+  if(req.isAuthenticated()){
+   next(); 
+  }else{
+    res.redirect('/users/login');
+  }
+});
 app.use('/board', board);
 app.use('/bicycleMap', bicycleMap);
-app.use('/videoView', videoView);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

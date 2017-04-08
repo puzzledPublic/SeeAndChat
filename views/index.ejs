@@ -1,7 +1,7 @@
 <%- include('layout') -%>
 
-        <h1>title</h1>
-        <p> Welcome to <%=title%></p>
+        <h1>Hello <%=title%></h1>
+        <h2>글 저장 테스트</h2>
         <form action='/topic' method='post'>
             <p>
                 <input type='text' name='title' placeholder='title'/>
@@ -14,9 +14,13 @@
             </p>
         </form>
         <hr>
+        <h2>파일 저장 테스트</h2>
         <form action='/upload' method='post' enctype='multipart/form-data'>
             <input type='file' name='uploadfile'/>
             <input type='submit'/>
         </form>
- 
+        <br>
+        <% if(!auth){ %>
+        <button><a href="/users/login">로그인</a></button>
+        <% } %>
  <%- include('footer') -%>

@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <title>
+        회원가입
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+</head>
+
+<body>
+    <div class="w3-container w3-center" style="padding-top: 5%"><h1>Welcome to Here</h1></div>
+    <div class="w3-container w3-display-middle " >
+        <form class="w3-container " action="./signup" onsubmit="return checkpw()"method="POST">
+            <div class="w3-section">
+                <label><b>회원이름</b></label>
+                <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="회원이름 입력..." name="userid" id="userid" required>
+                <label><b>비밀번호</b></label>
+                <input class="w3-input w3-border w3-margin-bottom" type="password" placeholder="비밀번호 입력..." name="password" id="password" required>
+                <label><b>비밀번호 확인</b></label>
+                <input class="w3-input w3-border w3-margin-bottom" type="password" placeholder="비밀번호 확인 입력..." name="passwordcheck" id="passwordcheck" required>
+                
+                <button class="w3-button w3-block w3-green w3-section w3-padding" id="signup" type="submit">회원가입</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        function checkpw(){
+            let pw = document.getElementsByTagName('input');
+            if(pw.password.value === pw.passwordcheck.value){
+                return true;
+            }
+            alert('비밀번호 불일치');
+            return false;
+        }
+        
+    </script>
+</body>
+
+</html>
