@@ -1,6 +1,57 @@
-<%-include('layout',{title:'express'})-%>
-    <p> 당신의 아이디는 <%=id%> 입니다.</p>
-    <p> tank는 <%=tank%>개 입니다.</p>
-    <p> <a href='./0'>tank 초기화</a></p>
+<%-include('layout')-%>
+  <%-include('navbar')-%>
+    <div class="w3-container w3-padding-64 w3-green">
+     
+    </div>
+    <div class="w3-content w3-center ">
+      <table class="w3-table-all w3-hoverable w3-small w3-responsive">
+        <col width="5%" />
+        <col width="60%" />
+        <col width="10%" />
+        <col width="15%" />
+        <col width="10%" />
+        <thead>
+          <tr class="w3-light-grey">
+            <th>NO</th>
+            <th class="w3-center">SUBJECT</th>
+            <th>WRITER</th>
+            <th>DATE</th>
+            <th>VIEWS</th>
+          </tr>
+        </thead>
+        <%  for(let i = 0; i < list.length; i++) { %>
+        <tr>
+          <td><%= list.length - i %></td>
+          <td><%= list[i].TITLE %></td>
+          <td><%= list[i].MEMBERID %></td>
+          <td><%= list[i].DATE %></td>
+          <td><%= list[i].READ_COUNT %></td>
+        </tr>
+        <% } %>
+      </table>
+      <div class="section">
+        <a href="./<%=pageInfo.boardName %>/write" class="w3-button w3-right">글 쓰기 &nbsp;<i class="fa fa-paper-plane"></i></a>
+      </div>
+    </div>
+    <div class="w3-container w3-center">
+      <div class="w3-bar">
+        <a href="#" class="w3-bar-item w3-button">&laquo;</a>
+        <% for(let i = pageInfo.startPage; i <= pageInfo.endPage ; i++) { %>
+        <a href="./<%= pageInfo.boardName%>?page=<%=i %>" class="w3-button"><%= i %></a>
+        <% } %>
+        <a href="#" class="w3-button">&raquo;</a>
+      </div>
+    </div>
     
-<%-include('footer')-%>
+    <script src="/javascripts/utils.js"></script>
+    <script>
+      function myFunction() {
+        var x = document.getElementById("navDemo");
+        if (x.className.indexOf("w3-show") == -1) {
+          x.className += " w3-show";
+        } else {
+          x.className = x.className.replace(" w3-show", "");
+        }
+      }
+    </script>
+    <%-include('footer')-%>

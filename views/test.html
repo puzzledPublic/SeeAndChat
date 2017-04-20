@@ -1,0 +1,52 @@
+<!DOCTYPE>
+<html>
+
+<head>
+    <title>testTemplate</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+    <style>
+        
+    </style>
+</head>
+
+<body>
+    <div class="w3-container" >
+        <div class="w3-row w3-padding w3-border">
+            <!-- Blog entries -->
+            <div class="w3-col l8 s12">
+                <video id="my-video" class="video-js" width="640" height="264" controls preload="auto" poster="" data-setup="{}">
+                    <source src="" type="video/webm">
+                    <p class="vjs-no-js">
+                        To view this video please enable JavaScript, and consider upgrading to a web browser that
+                    </p>
+                </video>
+            </div>
+            <!-- About/Information menu -->
+            <div class="w3-col l4" >
+                <div class="w3-bar w3-black w3-container">
+                    <button class="w3-bar-item w3-button" id="chatting">chat</button>
+                    <button class="w3-bar-item w3-button" id="userlisting">list</button>
+                </div>
+                <div class="w3-container" id="chat">
+                    <br>
+                    <div class="w3-container" style="height: 400px">
+                        <span id="msg"></span>
+                    </div>
+                    <input type="text" id="msgbox" /><button>send</button>
+                    <p>
+                        <b>Change NickName</b>
+                        <p>
+                            <input type="text" id="newNick" />
+                            <button type="" id="changeNick"> button</button>
+                </div>
+                <div class="w3-container" id="userlist" style="display: none">
+                    <span id="userList"></span>
+                </div>
+            </div>
+            <!-- END GRID -->
+        </div>
+    </div>
+</body>
+
+</html>

@@ -6,34 +6,61 @@
     </title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
 
 <body>
-    <div class="w3-container w3-center" style="padding-top: 5%"><h1>Welcome to Here</h1></div>
-    <div class="w3-container w3-display-middle " >
-        <form class="w3-container " action="./signup" onsubmit="return checkpw()"method="POST">
+    <div class="w3-container w3-center" style="padding-top: 5%">
+        <h1>Welcome to Here</h1>
+    </div>
+    <div class="w3-container w3-display-middle ">
+        <form class="w3-container " action="./signup" onsubmit="return check();" method="POST">
             <div class="w3-section">
                 <label><b>회원이름</b></label>
+                <button class="w3-button w3-tiny" id="idcheck" style="padding: 0%">중복검사</button>
                 <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="회원이름 입력..." name="userid" id="userid" required>
                 <label><b>비밀번호</b></label>
-                <input class="w3-input w3-border w3-margin-bottom" type="password" placeholder="비밀번호 입력..." name="password" id="password" required>
+                <input class="w3-input w3-border w3-margin-bottom" type="password" placeholder="비밀번호 입력..." name="password" id="password"
+                    required>
                 <label><b>비밀번호 확인</b></label>
-                <input class="w3-input w3-border w3-margin-bottom" type="password" placeholder="비밀번호 확인 입력..." name="passwordcheck" id="passwordcheck" required>
-                
+                <input class="w3-input w3-border w3-margin-bottom" type="password" placeholder="비밀번호 확인 입력..." name="passwordcheck" id="passwordcheck"
+                    required>
                 <button class="w3-button w3-block w3-green w3-section w3-padding" id="signup" type="submit">회원가입</button>
             </div>
         </form>
     </div>
     <script>
-        function checkpw(){
+        var e = false;
+        function check() {
             let pw = document.getElementsByTagName('input');
-            if(pw.password.value === pw.passwordcheck.value){
-                return true;
+            if(e == false){
+                alert('아이디 중복 체크를 해주세요');
+                return false;
             }
-            alert('비밀번호 불일치');
-            return false;
+            if (pw.password.value != pw.passwordcheck.value) {
+                alert('비밀번호 불일치');
+                return false;
+            }
+            return true;
         }
-        
+        $('#idcheck').click(function (event) {
+            event.preventDefault();
+            if ((/^[a-z][a-z\d]{3,11}$/.test($('#userid').val()))) {
+                $.post('./idcheck', {
+                    'userid': $('#userid').val()
+                }, function (data) {
+                    if (data.result) {
+                        alert('사용 가능합니다');
+                        e = true;
+                    } else {
+                        alert('중복 아이디가 있습니다.');
+                    }
+                });
+            }
+            else{
+                alert('아이디는 영문자로 시작합니다(4자 이상)');
+            }
+        });
     </script>
 </body>
 

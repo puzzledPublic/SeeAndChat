@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://www.w3schools.com/lib/w3.css">
     <link rel="stylesheet" href="../stylesheets/chatStyle.css">
     <link href="http://vjs.zencdn.net/5.17.0/video-js.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/videojs-contrib-hls/5.4.1/videojs-contrib-hls.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 </head>
@@ -16,15 +17,18 @@
 <body>
     <div class="w3-container">
         <div class="w3-twothird w3-container">
-            <video id="my-video" class="video-js vjs-default-skin" width="750" height="600" controls preload="auto" poster="" data-setup="{}">
+            <video id="my-video" class="video-js vjs-default-skin vjs-16-9 vjs-big-play-centered"  controls preload="auto" poster="" data-setup="{}">
                 <source src="rtmp://192.168.0.9:1935/live/test" type="rtmp/mp4">
+                <source src="http://192.168.0.9/hls/test.m3u8" type="application/x-mpegURL"
+                <!--<source src="http://vjs.zencdn.net/v/oceans.webm" type="video/webm"></source>-->
                 <p class="vjs-no-js">
                     To view this video please enable JavaScript, and consider upgrading to a web browser that
                 </p>
             </video>
+
         </div>
         <!--chat display-->
-        <div class="w3-third w3-container" id="chatDisplay">
+        <div class="w3-third w3-container " id="chatDisplay">
             <div class="w3-bar w3-black w3-container">
                 <button class="w3-bar-item w3-button" id="chatting">채팅창</button>
                 <button class="w3-bar-item w3-button" id="userlisting">유저목록</button>
@@ -32,7 +36,7 @@
             <div class="w3-container" id="chat">
                 <br>
                 <div class="w3-container">
-                    <div id="msg" style="height: 450px"></div>
+                    <div id="msg" style="height: 80%"></div>
                 </div>
                 <div class="w3-container">
                     <input type="text" id="msgbox" /><button>send</button>
@@ -45,7 +49,7 @@
                         <% } %>
                 </div>
             </div>
-            <div class="w3-container" id="userlist" style="display: none">
+            <div class="w3-container" id="userlist" style="display: none; height: 80%">
                 <div class="w3-container">
                     <div id="userList" style="height: 450px"></div>
                 </div>

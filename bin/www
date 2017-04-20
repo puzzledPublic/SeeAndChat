@@ -42,8 +42,7 @@ server.on('listening', onListening);
 io.use(function(socket, next){
   app.sessionMiddleware(socket.request, socket.request.res, next);
 });
-socket(io);
-
+var rooms = socket(io);
 /**
  * Normalize a port into a number, string, or false.
  */
@@ -103,3 +102,4 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
 }
+module.exports.rooms = rooms;

@@ -17,7 +17,11 @@ var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
   let auth = req.isAuthenticated();
-  res.render('index', { title: 'Express', auth: auth });
+  let user = {'HASROOM':false};
+  if(auth){
+    user = req.user[0];
+  }
+  res.render('index', { 'title': 'Express', 'auth': auth, 'user': user });
 });
 //글 목록 및 글 id 있는 경우 글 내용 출력
 router.get(['/topic','/topic/:id'], function(req, res, next){

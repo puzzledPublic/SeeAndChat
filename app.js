@@ -7,13 +7,13 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var passport = require('passport');
 var passportConfig = require('./config/passportConfig');
+var flash = require('connect-flash');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
 var board = require('./routes/board');
 var bicycleMap = require('./routes/bicycleMap');
 var videoView = require('./routes/videoView');
-
 var app = express();
 //html코드가 잘 보이도록
 app.locals.pretty = true;
@@ -40,6 +40,8 @@ var sessionMiddleware = session({
 });
 app.sessionMiddleware = sessionMiddleware;
 app.use(sessionMiddleware);
+//connect-flash 설정(세션에 저장하므로 세션 설정 뒤에 위치)
+app.use(flash());
 /*
 app.use(session({
     secret: 'keyboard tank',

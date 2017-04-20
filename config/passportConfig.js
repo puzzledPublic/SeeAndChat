@@ -1,4 +1,5 @@
 var passport = require('passport');
+var crypto = require('crypto');
 var localStrategy = require('passport-local').Strategy;
 var connection = require('./mysql');
 
@@ -13,7 +14,7 @@ module.exports = function () {
                 if(err){
                     return done(null,false);
                 }
-                if (results[0].PASSWORD != undefined && results[0].PASSWORD == password) {
+                if (results[0] && results[0].PASSWORD == password) {
                     //result = sql서 가져온 유저정보 session에 저장
                     return done(null, results);
                 } else {
