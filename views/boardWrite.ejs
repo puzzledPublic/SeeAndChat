@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <%- include('header') -%>
+</head>
+
+<body>
+    <%- include('navbar') -%>
+        <div class="w3-container w3-padding-64 w3-green">
+        </div>
+        <div class="w3-container">
+            <div class="w3-panel">
+                <label>SUBJECT</label>
+                <input class="w3-input w3-border w3-margin-bottom" type="text" placeholder="제목을 입력해 주세요.">
+                <label>CONTENT</label>
+                <textarea class="w3-input w3-border w3-margin-bottom" style="height:150px"  placeholder="글 내용을 입력해 주세요."></textarea>
+                <div class="w3-section">
+                    <a class="w3-button w3-green w3-right">Send &nbsp;<i class="fa fa-paper-plane"></i></a>
+                </div>
+            </div>
+        </div>
+
+        <script src="/javascripts/utils.js"></script>
+        <script>
+            function myFunction() {
+                var x = document.getElementById("navDemo");
+                if (x.className.indexOf("w3-show") == -1) {
+                    x.className += " w3-show";
+                } else {
+                    x.className = x.className.replace(" w3-show", "");
+                }
+            }
+        </script>
+</body>
+
+</html>

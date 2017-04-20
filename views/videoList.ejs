@@ -1,0 +1,91 @@
+<%- include('layout') -%>
+  <!-- Navbar (sit on top) -->
+  <div class="w3-top">
+    <div class="w3-bar w3-white w3-wide w3-padding w3-card-2">
+      <a class="w3-bar-item w3-button w3-padding-large w3-hide-medium w3-hide-large w3-right" href="javascript:void(0)" onclick="myFunction()"
+        title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
+      <a href="./" class="w3-bar-item w3-button"><b>See</b> And <b> Chat</b></a>
+      <!-- Float links to the right. Hide them on small screens -->
+      <div class="w3-right w3-hide-small">
+        <!--dropdown start-->
+        <div class="w3-dropdown-hover w3-white">
+          <a href="#projects" class="w3-bar-item w3-button">Projects <i class="fa fa-caret-down"></i></a>
+          <div class="w3-dropdown-content w3-bar-block w3-white w3-card-4">
+            <a href="/videoView" class="w3-bar-item w3-button">SeeList</a>
+            <% if(auth){ %>
+              <% if(user.HASROOM) { %>
+                <a href="/videoView/<%= user.ROOMNAME %>/config" class="w3-bar-item w3-button">방 설정</a>
+                <% }else{ %>
+                  <a href="#apply" class="w3-bar-item w3-button" id="apply">방 신청</a>
+                  <!-- modal -->
+                  <div id="applymodal" class="w3-modal">
+                    <div class="w3-modal-content">
+                      <div class="w3-container">
+                        <p>신청 하시겠습니까?</p>
+                        <a href="/videoView/room/apply" id='applyroom' class="w3-button">예</a>
+                        <a href="#close" id='closemodal' class="w3-button">아니오</a>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- modal end -->
+                  <% } }%>
+                    <a href="/bicycleMap" class="w3-bar-item w3-button">BicycleMap</a>
+          </div>
+        </div>
+        <!--dropdown end-->
+        <% if(!auth){ %>
+          <a href="/users/login" class="w3-bar-item w3-button">로그인</a>
+          <% }else{ %>
+            <a href="/users/logout" class="w3-bar-item w3-button">로그아웃</a>
+            <% } %>
+      </div>
+    </div>
+  </div>
+  <!-- Navbar on small screens start -->
+  <div id="navDemo" class="w3-bar-block w3-black w3-hide w3-hide-large w3-hide-medium w3-top" style="margin-top:46px">
+    <a href="/videoView" class="w3-bar-item w3-button w3-padding-large">SeeList</a>
+    <a href="/bicycleMap" class="w3-bar-item w3-button w3-padding-large">BicycleMap</a>
+    <% if(!auth){ %>
+      <a href="/users/login" class="w3-bar-item w3-button w3-padding-large">로그인</a>
+      <% }else{ %>
+        <a href="/users/logout" class="w3-bar-item w3-button w3-padding-large">로그아웃</a>
+        <% } %>
+  </div>
+  <!-- Navbar on small screens end -->
+  <!-- Page content start-->
+  <div class="w3-content " style="max-width:1200px">
+    <!-- RoomList Section start-->
+    <ul class="w3-ul w3-card-4 " style="padding-top: 64px">
+    <% for(let i = 0; i < rooms.length; i++){ %>
+    <!--
+      <div class="w3-row w3-padding" id="about">
+        <div class="w3-col w3-padding-large w3-padding-32 w3-margin-top w3-center">
+          <a href='/videoView/<%= rooms[i].ROOMNAME%>' class="w3-large w3-text-grey w3-hide-medium">
+            <%= rooms[i].SUBJECT %>
+          </a>
+        </div>
+      </div>-->
+      <li class="w3-padding-16">
+        <a href='/videoView/<%= rooms[i].ROOMNAME%>' class="w3-large w3-text-grey w3-hide-medium">
+        <img src="/images/img_avatar2.png" class="w3-left w3-circle w3-margin-right" style="width:50px">
+        <span class="w3-large"><%= rooms[i].SUBJECT%></span><br>
+        <span><%= rooms[i].ROOMNAME %>의 방</span>
+        </a>
+      </li>
+      <% } %>
+    </ul>
+        <!-- RoomList Section end-->
+  </div>
+  <!-- Page content end -->
+  <script src="/javascripts/utils.js"></script>
+  <script>
+    function myFunction() {
+      var x = document.getElementById("navDemo");
+      if (x.className.indexOf("w3-show") == -1) {
+        x.className += " w3-show";
+      } else {
+        x.className = x.className.replace(" w3-show", "");
+      }
+    }
+  </script>
+  <%- include('footer') -%>

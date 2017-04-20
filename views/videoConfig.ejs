@@ -1,0 +1,32 @@
+<%- include('layout') -%>
+    <div class="w3-container w3-light-grey w3-display-middle" style="width: 100%; height: 100%;">
+        <div class="w3-container w3-center" style="padding-top: 10%">
+            <h2>방송 설정</h2>
+        </div>
+        <form class="w3-container w3-card-4 w3-white w3-display-middle" style="width: 50%" method="POST">
+            <div class="w3-section">
+                <label>방송 제목</label>
+                <input placeholder="제목을 입력해 주세요.." class="w3-input" type="text" name="roomsubject" id="roomsubject" value="<%=configInfo.SUBJECT %>" required>
+            </div>
+            <div class="w3-section">
+                <label>스트리밍 주소</label>
+                <p class="w3-input">rtmp://서버주소:1935/live/<%=configInfo.STREAMKEY %></p>
+            </div>
+            <div class="w3-section">
+                <label>분류</label>
+                <select name="category">
+                    <option value="1" selected>영화</option>
+                    <option value="2">애니</option>
+                    <option value="3">예능</option>
+                    <option value="4">기타</option>
+                </select>
+            </div>
+            <input class="w3-check" type="checkbox" checked name="visible">
+            <label>방송 리스트에 추가</label>
+            <button type="button" class="w3-button w3-right w3-theme" onclick="history.back()">back</button>
+            <button type="submit" class="w3-button w3-right w3-theme">Send</button>
+            
+        </form>
+        
+    </div>
+    <%- include('footer') -%>
