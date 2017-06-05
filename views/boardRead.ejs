@@ -1,0 +1,111 @@
+<html>
+
+<head>
+    <%- include('layout') -%>
+</head>
+
+<body>
+    <%- include('navbar') -%>
+        <div class="w3-container w3-padding-64 w3-green">
+        </div>
+        <!--글 내용 표시-->
+        <div class="w3-card-4 w3-margin w3-white">
+            <div class="w3-container">
+                <h3><b><%= article.TITLE %></b></h3>
+                <small><%= article.MEMBERID %> <span class="w3-opacity"><%= article.DATE %></span></small>
+            </div>
+            <div class="w3-container">
+                <p><%= article.CONTENT %></p>
+                <!-- 삭제, 수정 버튼 -->
+                <% if(article.MEMBERID == user.MEMBERID) {%>
+                    <div class="w3-right">
+                        <button id="editBtn" class="w3-button w3-green">수정</button>
+                        <button id="deleteBtn" class="w3-button w3-green">삭제</button>
+                    </div>
+                 <% } %>
+            </div>
+            
+        </div>
+        <!--댓글 표시-->
+        <div class="w3-card-2 w3-margin w3-white">
+            <span class="w3-padding-large w3-right"><b><%= reply.length %> &nbsp;Comments</b> </span>
+            <ul class="w3-ul">
+                <!--댓글 시작 -->
+                <% for(let i = 0 ; i < reply.length; i++){ %>
+                <li>
+                    <h6><%=reply[i].MEMBERID %> <span class="w3-opacity "><small><%= reply[i].DATE %></small></span></h6>
+                    <p><%= reply[i].CONTENT %></p>
+                </li>
+                <% } %>
+                <!--댓글 폼-->
+                <% if(auth){ %>
+                <li id="lastli">
+                    <form id="replyForm">
+                    <span>
+                        <textarea class="w3-left w3-padding" id="replyText" style="width: 60%"></textarea>
+                    </span>
+                    <span>
+                        <button class="w3-button w3-green w3-margin" type="submit" id="replySend">Send &nbsp;<i class="fa fa-paper-plane"></i></button>
+                        <a href="./" class="w3-button w3-green w3-margin w3-hide-small">목록 &nbsp;<i class="fa fa-list"></i></a>
+                    </span>
+                    </form>
+                </li>
+                <% } %>
+            </ul>
+        </div>
+        <script>
+            //현재 리플 갯수
+            let replyCount = '<%= reply.length %>';
+               
+            //submit
+            $('#replyForm').submit(function(event){
+                event.preventDefault();
+
+                if($('#replyText').val()==''){
+                    alert('입력을 해주세요.');
+                    return false;
+                }
+                let dummy = document.URL.split('/');
+                //post
+                let posting = $.post('/board/reply/'+dummy[4]+'/'+dummy[5], {'content':$('#replyText').val(), 'replyCount': replyCount});
+                posting.done(function(data){
+                    for(let i = 0 ; i < data.replies.length; i++){
+                        //리플 리스트에 추가
+                        $('#lastli').prev().after('<li><h6>'+data.replies[i].MEMBERID+'<span class="w3-opacity "><small>'+data.replies[i].DATE+'</small></span></h6><p>'+data.replies[i].CONTENT+'</p></li>');
+                        //리플 가져오는 개수 조정
+                        replyCount++;
+                    }
+                    $('#replyText').val('');
+                });
+            });
+            if(document.getElementById('deleteBtn')){
+                document.getElementById('deleteBtn').addEventListener('click', function(event){
+                    event.preventDefault();
+                    let checked = confirm('정말 삭제하시겠습니까?');
+                    if(checked){
+                        $.ajax({
+                            url : document.URL+'?id=<%= article.MEMBERID %>',
+                            method : 'DELETE',
+                            contentType : false,
+                            processData : false,
+                            success : function(data){
+                                if(data.result){
+                                    alert(data.msg);
+                                    window.location.href=document.URL.substring(0, document.URL.lastIndexOf('/'));
+                                }
+                                else{
+                                    alert('삭제 에러 \n 다시 시도해주세요.');
+                                }
+                            }
+                        });
+                    }
+                });
+                document.getElementById('editBtn').addEventListener('click', function(event){
+                    event.preventDefault();
+                    window.location.href = document.URL+'/edit';
+                });
+            }
+        </script>
+</body>
+
+</html>

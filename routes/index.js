@@ -23,6 +23,8 @@ router.get('/', function(req, res, next) {
   }
   res.render('index', { 'title': 'Express', 'auth': auth, 'user': user });
 });
+
+
 //글 목록 및 글 id 있는 경우 글 내용 출력
 router.get(['/topic','/topic/:id'], function(req, res, next){
   var id = req.params.id;

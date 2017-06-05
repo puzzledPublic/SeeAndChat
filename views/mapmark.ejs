@@ -1,0 +1,235 @@
+<%- include('layout') %>
+    <%- include('navbar') %>
+    <div class="w3-padding-64 w3-row">
+        <div class="w3-container w3-half">
+           <div id="map" style="width:100%; height:400px; z-index: 0"></div>
+           <div>
+                검색:<input type="text" id="place" placeholder="주소를 입력해주세요...">
+                <button class="w3-button w3-green" id="search">이동</button>
+            </div>
+        </div>
+        
+        <div class="w3-container w3-half">
+           <div id="mapInfo">
+               <div class="w3-center ">
+                <p>
+                    <h1>사용법</h1> <br>
+                    <h3>1.지도에서 기억에 남는 장소를 선택하세요.<br>
+                        2.사진과 함께 짧은 글을 남겨주세요.<br>
+                        3.저장하세요.<br>
+                        4.즐겨찾기에 등록되었습니다!<br>
+                    </h3>
+                </p>
+               </div>
+           </div>
+        </div>
+    <div>
+    <script src="/javascripts/utils.js"></script>
+    <script type="text/javascript" src="//apis.daum.net/maps/maps3.js?apikey=05773f117e634e194f7f2308134d4e7f&libraries=services"></script>
+    <script>
+        
+        //지도 컨테이너
+        let container = document.getElementById('map');
+        
+        //지도 옵션
+        let options = {
+            center: new daum.maps.LatLng(37.6146555, 127.02099630000001), //지도의 중심좌표.
+	        level: 3
+        }
+        //지도 생성
+        let map = new daum.maps.Map(container, options);
+        //저장된 즐겨찾기 표시
+        $(document).ready(function(){
+            //즐겨찾기 정보 가져오는 ajax call
+            $.getJSON('/map/bookmark/'+'<%= user.MEMBERID %>'+'/data',function(data){
+                let marker;
+                //즐겨찾기 마커들 생성
+                for (let i = 0; i < data.length; i++) {
+                        marker = new daum.maps.Marker({
+                            map : map,
+                            position: new daum.maps.LatLng(data[i].LNG, data[i].LAT)
+                        }); 
+                        daum.maps.event.addListener(marker,'click',printBookmark(data[i], marker.getPosition(), marker));
+                    }
+            });
+        });
+        //마커
+        let marker;
+        //저장된 마크가 있는지 확인하는 플래그
+        let isMarked = true;
+        //마커 생성 이벤트 등록
+        daum.maps.event.addListener(map, 'click', function(mouseEvent){
+            //저장이 안된 마크가 존재하면 이전 마크 삭제
+            if(!isMarked){
+                marker.setMap(null);
+            }
+            //클릭한 위치 정보
+            let latlng = mouseEvent.latLng;
+            //마커 생성, 위치 지정, 표시
+            marker = new daum.maps.Marker();
+            marker.setPosition(latlng);
+            marker.setMap(map);
+            //addedMarkers.push(marker);
+            //즐겨찾기 Input Form 생성
+            printBookmarkInputForm();
+            //동적 생성된 form에 submit 이벤트 생성
+            $('#savebookmark').submit(function(event){
+                 event.preventDefault();
+                 
+                 let formData = new FormData($('#savebookmark')[0]);
+                 //gb = LAT 좌표, hb = LNG 좌표
+                 formData.append('LAT', marker.getPosition().gb);
+                 formData.append('LNG', marker.getPosition().hb);
+                 //multer 모듈 쓰니 append 할 필요 없이 form으로 초기화한 formdata만 넘겨도 처리됨
+                 //formData.append('comment',$('input[name=comment]').val());
+                 //formData.append('image',$('input[name=image]')[0].files[0]);
+                 
+                 $.ajax({
+                        url : '/map/bookmark',
+                        data : formData,
+                        type : 'POST',
+                        contentType : false,
+                        processData : false,
+                        success: function(data){
+                            saveMarker(data);
+                        },
+                        
+                     });
+            });
+            isMarked = false;
+        });
+        //즐겨찾기 작성 취소 함수
+        function cancelMarker(){
+            //마커 제거
+            marker.setMap(null);
+            document.getElementById('mapInfo').innerHTML="";
+        }
+        
+        //즐겨찾기 작성 저장 함수
+        function saveMarker(data){
+            //저장 마크 플래그 true, 마크에 클릭 이벤트 생성
+            isMarked = true;
+            //저장하며 마커 클릭 이벤트 등록(즐겨찾기 정보 출력)
+            let tmpMarker = marker;
+            daum.maps.event.addListener(tmpMarker, 'click', printBookmark(data, tmpMarker.getPosition()));
+            //저장후 요소 제거
+            document.getElementById('mapInfo').innerHTML="";
+            
+        }
+        //즐겨찾기 Input Form 생성 함수
+        function printBookmarkInputForm(){
+            document.getElementById('mapInfo').innerHTML = '<div class="w3-center"><form id="savebookmark">코멘트 : <input type="text" name="comment"><br>사진 : <input type="file" name="image" accept="image/*"><br><button class="w3-button w3-green" type="submit">저장</button></form><button class="w3-button w3-green" onClick="cancelMarker()">취소</button> </div>';
+        }
+        //즐겨찾기 정보 표시 이벤트 함수
+        function printBookmark(data, markerPosition, marker){
+            //data : 즐겨찾기 정보 객체, markerPosition : 마커 좌표값
+            return function(){
+                //사진, 코멘트, 버튼(수정, 삭제) 생성
+                document.getElementById('mapInfo').innerHTML='<div><img src="/upload/'+data.FILENAME+'" style="max-width: 100%; height: auto;"/><br> 코멘트: '+data.COMMENT+'<br><div><button class="w3-button w3-green" id="modifyMarker"><i class="fa fa-pencil fa-fw" aria-hidden="true"></i>수정</button><button class="w3-button w3-green" id="eraseMarker"><i class="fa fa-trash-o fa-lg"></i>삭제</button></div></div>';
+                //버튼 이벤트 등록(수정, 삭제)
+                document.getElementById('modifyMarker').addEventListener('click', modifyMarker(data, markerPosition, marker));
+                document.getElementById('eraseMarker').addEventListener('click', eraseMarker(markerPosition, marker));
+            }
+        }
+        //즐겨찾기 마커 수정 콜백 함수
+        function modifyMarker(data, markerPosition, marker){
+            return function(){
+                //즐겨찾기 Input Form 생성
+               printBookmarkInputForm();
+               //기존에 저장된 수정할 comment를 보여준다 
+               $('input[name=comment]').val(data.COMMENT);
+               //Form Submit 이벤트 생성
+               $('#savebookmark').submit(function(event){
+                   event.preventDefault();
+                   let formData = new FormData($('#savebookmark')[0]);
+                   formData.append('LAT', markerPosition.gb);
+                   formData.append('LNG', markerPosition.hb);
+                   formData.append('imagename',data.FILENAME);
+                   $.ajax({
+                       url : '/map/bookmark',
+                       data : formData,
+                       method : 'PUT',
+                       contentType : false,
+                       processData : false,
+                       success : function(data){
+                           if(data.result){
+                            //등록된 이벤트 , Input Form 제거
+                            daum.maps.event.removeListener(marker, 'click', printBookmark());
+                            document.getElementById('mapInfo').innerHTML="";
+                            //새로운 이벤트 등록
+                            daum.maps.event.addListener(marker, 'click', printBookmark(data, marker.getPosition(), marker));
+                            alert('수정 완료.');
+                           }
+                           else{
+                               alert(data.msg);
+                           }
+                        }
+                   });
+               });
+            }
+        } 
+        //즐겨찾기 마커 삭제 콜백 함수
+        function eraseMarker(markerPosition, marker){
+            return function(){
+                if(eraseCheck()){
+                    $.ajax({
+                        url : '/map/bookmark?LAT='+markerPosition.gb+'&LNG='+markerPosition.hb,
+                        method : 'DELETE',
+                        contentType : false,
+                        processData : false,
+                        success : function(data){
+                            if(data.result){
+                                document.getElementById('mapInfo').innerHTML = "";
+                                marker.setMap(null);          
+                                alert('삭제 완료.');
+                            }else{
+                                alert(data.msg);
+                            }
+                        }
+                    });
+                }else{
+                    alert('삭제가 취소됐습니다.');
+                }
+            }
+        }
+        //삭제 확인 함수
+        function eraseCheck(){
+            let erase = confirm('정말 삭제하시겠습니까?');
+            return erase;
+        }
+        //
+        document.addEventListener('keydown', function(event){
+                if(event.keyCode == 13 ){
+                    document.getElementById('search').click();
+                }     
+            },false);
+        //장소 키워드 검색 버튼 이벤트 등록
+        document.getElementById('search').addEventListener('click',function(){
+            let keyword = document.getElementById('place').value;
+            if(keyword ==='' || keyword == undefined){
+                alert('장소를 입력 해주세요.');
+                return false;
+            }
+            searchPlace(keyword);
+        });
+        //장소 키워드 검색 함수
+        function searchPlace(keyword){
+            //장소 검색 객체 생성
+            let ps = new daum.maps.services.Places();
+            //키워드로 검색
+            ps.keywordSearch(keyword,placesSearchCB);
+        }
+        //키워드 검색 후 호출되는 콜백 함수
+        function placesSearchCB(status, data, pagination){
+            if(status === daum.maps.services.Status.OK){
+                //지도 바운드 설정
+                let bounds = new daum.maps.LatLngBounds();
+                for(let i = 0 ; i < data.places.length; i++){
+                    bounds.extend(new daum.maps.LatLng(data.places[i].latitude, data.places[i].longitude));
+                }
+                map.setBounds(bounds);
+            }
+        }
+        
+    </script>
+<%- include('footer') %>

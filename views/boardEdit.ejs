@@ -1,0 +1,42 @@
+<html>
+
+<head>
+    <%- include('header') -%>
+</head>
+
+<body>
+    <%- include('navbar') -%>
+        <div class="w3-container w3-padding-64 w3-green">
+        </div>
+        <div class="w3-container">
+            <div class="w3-panel">
+                <form method="POST">
+                    <label>SUBJECT</label>
+                    <input class="w3-input w3-border w3-margin-bottom" name="title" type="text" placeholder="제목을 입력해 주세요." value="<%=article.TITLE %>">
+                    <label>CONTENT</label>
+                    <textarea class="w3-input w3-border w3-margin-bottom" name="content" style="height:150px" placeholder="글 내용을 입력해 주세요."><%= article.CONTENT%></textarea>
+                    <button id='cancel' class="w3-button w3-green w3-right">취소<i class="fa fa-paper-cancel"></i></button>
+                    <div class="w3-section">
+                        <button type="submit" class="w3-button w3-green w3-right">Send &nbsp;<i class="fa fa-paper-plane"></i></button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <script src="/javascripts/utils.js"></script>
+        <script>
+            document.getElementById('cancel').addEventListener('click', function(event){
+                event.preventDefault();
+                history.back();
+            });
+            function myFunction() {
+                var x = document.getElementById("navDemo");
+                if (x.className.indexOf("w3-show") == -1) {
+                    x.className += " w3-show";
+                } else {
+                    x.className = x.className.replace(" w3-show", "");
+                }
+            }
+        </script>
+</body>
+
+</html>
